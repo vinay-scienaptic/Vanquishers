@@ -3,6 +3,24 @@ from pydantic import BaseModel
 import google.generativeai as genai
 import os
 
+
+import torch
+import torch.nn as nn
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+n_gpu = torch.cuda.device_count()
+from transformers import BertTokenizer,BertModel
+
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+from keras.preprocessing.sequence import pad_sequences
+from sklearn.model_selection import train_test_split
+from pytorch_pretrained_bert import BertTokenizer, BertConfig
+from pytorch_pretrained_bert import BertAdam, BertForSequenceClassification
+from tqdm import tqdm, trange
+import pandas as pd
+import io
+import numpy as np
+
+
 # Initialize FastAPI app
 app = FastAPI()
 
@@ -36,3 +54,28 @@ def ask_question(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 # Run the server using: uvicorn filename:app --host 0.0.0.0 --port 8000
+
+
+@app.post("/llm", response_model=QueryResponse)
+def ask_model_question(request: QueryRequest):
+    # Load English BERT tokenizer and model
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+    model1 = BertModel.from_pretrained('bert-base-uncased')
+
+    paragraphs=[]
+    questions=[]
+    answers=[]
+    f = open("data/paragraphs.json", "r+")
+    q = open("data/questions.json", "r+")
+    a = open("data/answers.json", "r+")
+
+    for x in f:
+        paragraphs.append(x)
+    for x in q:
+        questions.append(x)
+    for x in a:
+        answers.append(x)
+    print(len(paragraphs),len(questions),len(answers))
+
+
+    return len(paragraphs),len(questions),len(answers), answers[1]
