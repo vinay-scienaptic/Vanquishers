@@ -28,7 +28,7 @@ app.add_middleware(
 
 
 
-app.include_router(chatbot.router,prefix="/rollup",responses={404: {"description": "Not found"}})
+app.include_router(chatbot.router,prefix="/chatbot",responses={404: {"description": "Not found"}})
 
 FastAPIInstrumentor().instrument_app(
     app, tracer_provider=trace_provider, meter_provider=metrics_provider
