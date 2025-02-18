@@ -24,6 +24,7 @@ class QueryRequest(BaseModel):
 class QueryResponse(BaseModel):
     answer: str
 
+@app.post("/ask", response_model=QueryResponse)
 def ask_question(request: QueryRequest):
     """Handles LLM queries via FastAPI using Gemini."""
     try:
