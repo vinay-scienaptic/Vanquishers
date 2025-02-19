@@ -5,6 +5,10 @@ import os
 from fastapi.middleware.cors import CORSMiddleware
 import textwrap
  
+from googleapiclient.discovery import build
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.oauth2.credentials import Credentials
+
 # Initialize FastAPI app
 app = FastAPI()
  
@@ -62,3 +66,60 @@ def ask_question(request: QueryRequest):
         raise HTTPException(status_code=500, detail=str(e))
  
 # Run the server using: uvicorn filename:app --host 0.0.0.0 --port 8000
+
+@app.post("/schedule", response_model=QueryResponse)
+def schedule_call(request: QueryResponse):
+    # Authenticate with OAuth 2.0
+    SCOPES = ['https://www.googleapis.com/auth/calendar']
+
+
+    SERVICE_ACCOUNT_FILE = "cal_credentials.json"
+    
+    # Load OAuth 2.0 credentials and start authentication flow
+    flow = InstalledAppFlow.from_client_secrets_file("cal_credentials.json", SCOPES)
+    credentials = flow.run_local_server(port=0)
+
+
+    # Convert to Credentials object
+    # credentials = Credentials.from_authorized_user_info(creds_data)
+
+
+    service = build('calendar', 'v3', credentials=credentials)
+
+
+    # Step 2: Define event details
+    event = {
+        'summary': 'Project Call',
+        'location': 'Google Meet',
+        'description': 'Discuss project updates',
+        'start': {
+            'dateTime': '2025-02-20T10:00:00',
+            'timeZone': 'America/New_York',
+        },
+        'end': {
+            'dateTime': '2025-02-20T11:00:00',
+            'timeZone': 'America/New_York',
+        },
+        'attendees': [
+            {'email': 'vinay.pottabathini@scienaptic.com'},
+            {'email': 'vinay040998@gmail.com'},
+            
+        ],
+        'conferenceData': {
+            'createRequest': {
+                'conferenceSolutionKey': {'type': 'hangoutsMeet'},
+                'requestId': 'meet12345'
+            }
+        }
+    }
+
+    # Step 3: Create event and send invites
+    event = service.events().insert(
+        calendarId='primary',
+        body=event,
+        conferenceDataVersion=1,  # Required for Google Meet link
+        sendUpdates='all'  # Sends email invites
+    ).execute()
+
+    print(f"Event created: {event.get('htmlLink')}")
+    return None
