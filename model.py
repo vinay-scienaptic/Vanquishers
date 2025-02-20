@@ -73,10 +73,10 @@ def schedule_call(request: QueryResponse):
     SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 
-    SERVICE_ACCOUNT_FILE = "cal_credentials.json"
+    SERVICE_ACCOUNT_FILE = "creds.json"
     
     # Load OAuth 2.0 credentials and start authentication flow
-    flow = InstalledAppFlow.from_client_secrets_file("cal_credentials.json", SCOPES)
+    flow = InstalledAppFlow.from_client_secrets_file("creds.json", SCOPES)
     credentials = flow.run_local_server(port=0)
 
 
