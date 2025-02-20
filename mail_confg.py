@@ -9,14 +9,15 @@ from email.mime.text import MIMEText
 SEND_MAIL = True
 MAIL_USER = os.environ.get("mail_agent")
 MAIL_USER_PASSWORD = os.environ.get("mail_agent_password")
-MAIL_FROM = os.environ.get("mail_from")
-MAIL_TO = str(os.environ.get("mail_to")).splitlines()
-MAIL_CC = str(os.environ.get("mail_cc")).splitlines()
+# MAIL_FROM = os.environ.get("mail_from")
+# MAIL_TO = str(os.environ.get("mail_to")).splitlines()
+# MAIL_CC = str(os.environ.get("mail_cc")).splitlines()
 
+MAIL_FROM = "vinay.pottabathini@scienaptic.com"
+MAIL_TO = "vinay040998@gmail.com"
+MAIL_CC = ""
 
-
-
-def send_alert(data: dict) -> None:
+def send_alert():
     """to send alert
 
     Args:

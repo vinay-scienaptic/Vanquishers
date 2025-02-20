@@ -9,6 +9,8 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 
+from mail_confg import send_alert
+
 # Initialize FastAPI app
 app = FastAPI()
  
@@ -83,13 +85,24 @@ def schedule_call(request: QueryResponse):
 
     #"urn:ietf:wg:oauth:2.0:oob" 
     # Load OAuth 2.0 credentials and start authentication flow
-    flow = InstalledAppFlow.from_client_config(creds_dict,scopes=["https://www.googleapis.com/auth/drive"],redirect_uri="https://vanquishers.scienaptic.com/" )
-    credentials = flow.run_local_server(port=0) 
+    flow = InstalledAppFlow.from_client_config(creds_dict,scopes=["https://www.googleapis.com/auth/drive"] )
+    # Generate the authorization URL
+    auth_url, _ = flow.authorization_url(prompt="consent")
 
+    # Print the URL for manual authentication
+    print("Go to the following URL, log in, and authorize the app:")
+    print(auth_url)
 
-    # Convert to Credentials object
-    # credentials = Credentials.from_authorized_user_info(creds_data)
+    # User manually copies and pastes the auth code
+    auth_code = input("Enter the authorization code: ")
 
+    # Exchange the authorization code for tokens
+    flow.fetch_token(code=auth_code)
+
+    # Get the credentials object
+    credentials = flow.credentials
+
+    print("Access Token:", credentials.token)
 
     service = build('calendar', 'v3', credentials=credentials)
 
@@ -130,3 +143,9 @@ def schedule_call(request: QueryResponse):
 
     print(f"Event created: {event.get('htmlLink')}")
     return None
+
+
+
+@app.post("/mail", response_model=QueryResponse)
+def send_mail(request: QueryResponse):
+    send_alert()
