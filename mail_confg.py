@@ -7,14 +7,20 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 SEND_MAIL = True
-MAIL_USER = os.environ.get("mail_agent")
-MAIL_USER_PASSWORD = os.environ.get("mail_agent_password")
+# MAIL_USER = os.environ.get("mail_agent")
+# MAIL_USER_PASSWORD = os.environ.get("mail_agent_password")
+
+MAIL_USER = "techsupport@scienaptic.com"
+MAIL_USER_PASSWORD = "ojltbktqfpneztep"
+
+
+
 # MAIL_FROM = os.environ.get("mail_from")
 # MAIL_TO = str(os.environ.get("mail_to")).splitlines()
 # MAIL_CC = str(os.environ.get("mail_cc")).splitlines()
 
-MAIL_FROM = "vinay.pottabathini@scienaptic.com"
-MAIL_TO = "vinay040998@gmail.com"
+MAIL_FROM = "techsupport@scienaptic.com"
+MAIL_TO = "vinay.pottabathini@scienaptic.com"
 MAIL_CC = ""
 
 def send_alert():
