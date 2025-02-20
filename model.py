@@ -81,9 +81,9 @@ def schedule_call(request: QueryResponse):
     
     creds_dict = {"web":{"client_id":CLIENT_ID,"project_id":PROJECT_ID,"auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":CLIENT_SECRET}}
 
-
+    #"urn:ietf:wg:oauth:2.0:oob" 
     # Load OAuth 2.0 credentials and start authentication flow
-    flow = InstalledAppFlow.from_client_config(creds_dict,scopes=["https://www.googleapis.com/auth/drive"])
+    flow = InstalledAppFlow.from_client_config(creds_dict,scopes=["https://www.googleapis.com/auth/drive"],redirect_uri="https://vanquishers.scienaptic.com/" )
     credentials = flow.run_local_server(port=0) 
 
 
