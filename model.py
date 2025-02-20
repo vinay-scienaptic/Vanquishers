@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel,EmailStr
 import google.generativeai as genai
 import os
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.oauth2.credentials import Credentials
 
-from mail_confg import send_alert
+from mail_confg import to_techsupport_mail,to_recipient_mail
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -33,6 +33,9 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Request model for incoming query
 class QueryRequest(BaseModel):
     question: str
+    name: str
+    mail: EmailStr  # Validates email format
+    phone: str
  
 # Response model for API response
 class QueryResponse(BaseModel):
@@ -147,5 +150,12 @@ def schedule_call(request: QueryResponse):
 
 
 @app.post("/mail", response_model=QueryResponse)
-def send_mail(request: QueryResponse):
-    send_alert()
+def send_mail(request: QueryRequest): 
+    print(request.dict())
+    data = {"recipient_name": request.name, "recipient_email": request.mail, "recipient_phone": request.phone  }
+
+    # to_techsupport_mail(data)
+
+    to_recipient_mail(data)
+
+    return QueryResponse(answer="Done")
