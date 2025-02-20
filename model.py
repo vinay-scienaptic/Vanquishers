@@ -54,6 +54,7 @@ def ask_question(request: QueryRequest):
         model = genai.GenerativeModel("gemini-1.5-flash")
         # Prompt modification: Ask the model for a summary or concise answer
         scienaptic_data= "We are Scienaptic!!! Founded in 2014, Scienaptic AI was built with a mission to drive financial inclusion at scale through AI-driven credit decisioning. Our platform encapsulates over 200 years of combined credit risk expertise and a decade of technological innovation, integrating diverse data sources, advanced machine learning algorithms, and comprehensive risk and fair lending monitoring processes. Our Mission: Increase credit availability. We are a CUSO driven by a coalition of visionary credit unions. Leadership Team Investors & Advisers Our Mission: Increase credit availability. Credit administration is handicapped by old credit underwriting technology. We are on a mission to change that. We are a CUSO driven by a coalition of visionary credit unions. Out credit union clients: Credit Union of Colorado Covantage Credit Union People Driven Credit Union Wildfire Credit Union Elga Credit Union 4front Credit Union Alliance Catholic Credit Union Partner Colorado Credit Union Advantage One Credit Union Michigan Credit Union League Leadership Team Pankaj Kulshrestha (CEO) Eric Steinhoff (Client Impact) Vinay Bhaskar (AI / Risk Innovation) Joydip Gupta (Business Leader - APAC) Samantha Hubbard (Business Development) Gregory Bishop (Business Development) Abhishek Sharma (Engineering) Chandan Pal (Marketing) Investors & Advisers Pramod Bhasin Ray Duggins Francisco D'Souza Michael Heller Kevin Oden."
+        rules = " If any request like writing code ,giving weather update comes, Then just mention -> Sorry for the inconvinicen cause. Please ask question related to Scienaptic organization. Also treat Scienaptic as ours not theres.IF any random letter or number or character is given return Sorry for the inconviniece"
         prompt = f"{scienaptic_data} Please provide a concise answer to the following question in 5 lines or less: {request.question}"
         response = model.generate_content(prompt)
         answer = response.text.strip()
@@ -72,12 +73,18 @@ def schedule_call(request: QueryResponse):
     # Authenticate with OAuth 2.0
     SCOPES = ['https://www.googleapis.com/auth/calendar']
 
+    CLIENT_ID = os.getenv("CALENDER_CLIENT_ID")
+    PROJECT_ID = os.getenv("CALENDER_PROJECT_ID")
+    CLIENT_SECRET = os.getenv("CALENDAR_CLIENT_SECRET")
 
     SERVICE_ACCOUNT_FILE = "creds.json"
     
+    creds_dict = {"web":{"client_id":CLIENT_ID,"project_id":PROJECT_ID,"auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_secret":CLIENT_SECRET}}
+
+
     # Load OAuth 2.0 credentials and start authentication flow
-    flow = InstalledAppFlow.from_client_secrets_file("creds.json", SCOPES)
-    credentials = flow.run_local_server(port=0)
+    flow = InstalledAppFlow.from_client_config(creds_dict,scopes=["https://www.googleapis.com/auth/drive"])
+    credentials = flow.run_local_server(port=0) 
 
 
     # Convert to Credentials object
