@@ -78,7 +78,7 @@ def to_recipient_mail(data):
     msg = EmailMessage()
     msg["Subject"] = "ScienapticAI Received Your Request"
 
-    email_body = f'Hi {data["recipient_name"]} we have received your request for Demo. Our Techsupport will contact you soon. Thanks for reaching out to Scienaptic.'
+    email_body = f'Hi {data["recipient_name"]} we have received your request for Demo on {data["recipient_date"]}. Our Techsupport will contact you soon. Thanks for reaching out to Scienaptic.'
     msg["From"] = EMAIL_ADDRESS
     msg["To"] = data['recipient_email']
     
